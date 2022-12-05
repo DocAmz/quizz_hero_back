@@ -1,0 +1,31 @@
+version: '4'
+services:
+  php-apache-environment:
+    container_name: backend-qh
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    volumes:
+      - './api:/var/www/html' # sync dir for project
+    ports:
+      - 80:80 #dev
+      - 443:443 #ssl port traffic
+  db:
+    container_name: db-qh
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=quizz_hero
+      - MYSQL_USER=privatedev
+      - MYSQL_PASSWORD=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    volumes:
+      - './db:/docker-entrypoint-initdb.d' #sync sql files with container
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8001:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
